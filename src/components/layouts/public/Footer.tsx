@@ -20,7 +20,7 @@ function PublicFooter({categories}: {categories: Category[]}) {
                         <div className="flex gap-2">
                             <Button asChild size="icon" variant="ghost">
                                 <a
-                                    href="https://youtube.com/channel/example"
+                                    href="https://www.youtube.com/@sekaijk"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
@@ -30,7 +30,7 @@ function PublicFooter({categories}: {categories: Category[]}) {
                             </Button>
                             <Button asChild size="icon" variant="ghost">
                                 <a
-                                    href="https://twitter.com/example"
+                                    href="https://www.facebook.com/sekaijk"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
@@ -40,7 +40,7 @@ function PublicFooter({categories}: {categories: Category[]}) {
                             </Button>
                             <Button asChild size="icon" variant="ghost">
                                 <a
-                                    href="https://instagram.com/example"
+                                    href="https://www.instagram.com/sekai_j.k"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
@@ -50,7 +50,7 @@ function PublicFooter({categories}: {categories: Category[]}) {
                             </Button>
                             <Button asChild size="icon" variant="ghost">
                                 <a
-                                    href="https://twitch.tv/example"
+                                    href="https://www.tiktok.com/@sekaijk"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
