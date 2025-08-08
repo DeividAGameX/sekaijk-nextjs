@@ -16,8 +16,10 @@ function CarouselItem({index, children}: Readonly<CarouselItemProps>) {
             className={`absolute top-0 left-0 w-full h-full`}
             transition={{duration: 0.5}}
             animate={{
-                x: `${(index - current) * 100}vw`,
-                scale: current === index ? 1 : 0.9,
+                // x: `${(index - current) * 100}vw`,
+                // scale: current === index ? 1 : 0.9,
+                translateX: `${(index - current) * 100}%`,
+                scale: current === index? 1 : 0.9,
             }}
         >
             {children}
