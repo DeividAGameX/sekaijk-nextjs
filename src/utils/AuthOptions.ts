@@ -2,6 +2,7 @@ import {Session, AuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import {prisma} from "@/lib/prisma";
+import {generateSignedToken} from "./signedToken";
 
 interface User {
     id: number;
@@ -19,7 +20,7 @@ interface User {
 }
 
 export type ExtendedSession = Session & {
-    user: Session["user"] & User & {token: unknown};
+    user: Session["user"] & User & {token: unknown | string};
 };
 
 export const authOptions: AuthOptions = {
@@ -71,9 +72,15 @@ export const authOptions: AuthOptions = {
         signIn: "/authentication",
         signOut: "/",
     },
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 días
+    },
     callbacks: {
         async jwt({token, account}) {
             // Persist the OAuth access_token and or the user id to the token right after signin
+            console.log("Account");
+            console.log(token);
             if (account) {
                 token.accessToken = account.access_token;
             }
@@ -93,13 +100,16 @@ export const authOptions: AuthOptions = {
                     publicOrder: true,
                 },
             });
-
             if (dbUser) {
                 const extendedSession: ExtendedSession = {
                     ...session,
                     user: {
                         ...dbUser,
-                        token: token.accessToken,
+                        token: generateSignedToken(
+                            "validate",
+                            dbUser.name,
+                            process.env.SECRET ?? ""
+                        ),
                     },
                 };
                 return extendedSession;

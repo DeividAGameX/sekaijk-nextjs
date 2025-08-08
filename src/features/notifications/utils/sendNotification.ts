@@ -4,6 +4,7 @@ import {NotificationSendType} from "../types/notifications";
 import PermissionsModel from "@/features/roles/lib/PermissionsModel";
 import PostModel from "@/features/posts/lib/PostModel";
 import {NotificationType as NotificationEnum} from "@prisma/client";
+import axios from "axios";
 
 interface NotificationProp {
     title: string;
@@ -39,6 +40,13 @@ async function createNotification({
                     })),
                 },
             },
+        });
+        axios.post(`${process.env.NEXT_PUBLIC_SOCKET}/webhook/notifications`, {
+            title,
+            message,
+            type,
+            targetUrl,
+            users: recipientIds,
         });
         return notification;
     } catch (error) {

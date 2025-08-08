@@ -21,14 +21,15 @@ import Link from "next/link";
 import {NotificationType as NotificationEnum} from "@prisma/client";
 import {AnimatePresence, motion} from "framer-motion";
 import {toast} from "sonner";
-import {useEffect, useState} from "react";
-import {usePathname} from "next/navigation";
+import {useState} from "react";
+import useUserSession from "@/hooks/useUserSession";
+import SocketNotifications from "./SocketNotifications";
 
 const iconNotification: {[key in NotificationEnum]: string} = {
     INFO: "bi bi-info-circle-fill", // Información general
     WARNING: "bi bi-exclamation-triangle-fill", // Advertencia
     SUCCESS: "bi bi-check-circle-fill", // Éxito
-    SYSTEM: "bi icon-ajk", // Ícono personalizado del sistema
+    SYSTEM: "icon-ajk text-ms", // Ícono personalizado del sistema
     POST_REVIEW: "bi bi-chat-left-text", // Notificación de revisión pendiente
     POST_REVIEW_ACCEPTED: "bi bi-hand-thumbs-up", // Revisión aceptada
     POST_REVIEW_CHANGED: "bi bi-pencil-square", // Revisión modificada
@@ -106,71 +107,93 @@ function NotificationComponent({
 }
 
 function Notifications() {
+    const {user} = useUserSession();
     const {isLoading, data, refetch} = useGetNotificationsQuery(null);
     const [markRead, {error}] = useMarkReadMutation();
     const [markAsReadAll] = useMarkAllReadMutation();
     const tNotifications = useTranslations("notifications");
-    const pathName = usePathname();
     const onMarkRead = async (id: string) => {
         await markRead({id, read: true});
         if (error) toast.error("Error");
         return Promise.resolve();
     };
 
-    useEffect(() => {
-        return () => {
-            refetch();
-        };
-    }, [pathName, refetch]);
-
     return (
-        <Dropdown
-            menu={{
-                items: [],
-            }}
-            dropdownRender={() => (
-                <div className="max-w-sm w-full min-w-sm bg-neutral-800 rounded-lg py-4 px-3 overflow-hidden">
-                    <div className="w-full py-2 px-3 border-b-2 border-neutral-600 flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg w-full text-white font-bold font-lato">
-                                {tNotifications("title")}
-                            </h3>
-                            <span className="w-5 h-5 p-3 text-sm flex justify-center items-center rounded-full bg-neutral-900">
-                                {data?.length}
-                            </span>
+        <>
+            <SocketNotifications
+                user={user}
+                refetch={refetch}
+                iconNotification={iconNotification}
+            />
+            <Dropdown
+                menu={{
+                    items: [],
+                }}
+                dropdownRender={() => (
+                    <div className="max-w-sm w-full min-w-sm bg-neutral-800 rounded-lg py-4 px-3 overflow-hidden">
+                        <div className="w-full py-2 px-3 border-b-2 border-neutral-600 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-lg w-full text-white font-bold font-lato">
+                                    {tNotifications("title")}
+                                </h3>
+                                <span className="w-5 h-5 p-3 text-sm flex justify-center items-center rounded-full bg-neutral-900">
+                                    {data?.length}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    onClick={refetch}
+                                    className="text-white"
+                                    title={tNotifications("refresh")}
+                                >
+                                    <FontAwesomeIcon icon={faRefresh} />
+                                </Button>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    onClick={markAsReadAll}
+                                    className="text-white"
+                                    title={tNotifications("markAsReadAll")}
+                                >
+                                    <FontAwesomeIcon icon={faCheckDouble} />
+                                </Button>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                type="text"
-                                size="small"
-                                onClick={refetch}
-                                className="text-white"
-                                title={tNotifications("refresh")}
-                            >
-                                <FontAwesomeIcon icon={faRefresh} />
-                            </Button>
-                            <Button
-                                type="text"
-                                size="small"
-                                onClick={markAsReadAll}
-                                className="text-white"
-                                title={tNotifications("markAsReadAll")}
-                            >
-                                <FontAwesomeIcon icon={faCheckDouble} />
-                            </Button>
-                        </div>
-                    </div>
-                    <div className="w-full max-h-80 overflow-y-auto overflow-x-hidden">
-                        <AnimatePresence>
-                            {data ? (
-                                data.length > 0 ? (
-                                    (data ?? []).map((d) => (
-                                        <NotificationComponent
-                                            key={d.id}
-                                            {...d.notification}
-                                            onMarkRead={onMarkRead}
-                                        />
-                                    ))
+                        <div className="w-full max-h-80 overflow-y-auto overflow-x-hidden">
+                            <AnimatePresence>
+                                {data ? (
+                                    data.length > 0 ? (
+                                        (data ?? []).map((d) => (
+                                            <NotificationComponent
+                                                key={d.id}
+                                                {...d.notification}
+                                                onMarkRead={onMarkRead}
+                                            />
+                                        ))
+                                    ) : (
+                                        <motion.div
+                                            key={"empty"}
+                                            variants={{
+                                                initial: {x: "384px"},
+                                                animate: {x: 0},
+                                                exit: {x: "384px"},
+                                            }}
+                                            initial="initial"
+                                            animate="animate"
+                                            exit="exit"
+                                        >
+                                            <Empty
+                                                image={
+                                                    Empty.PRESENTED_IMAGE_SIMPLE
+                                                }
+                                                description={tNotifications(
+                                                    "empty"
+                                                )}
+                                            />
+                                        </motion.div>
+                                    )
                                 ) : (
                                     <motion.div
                                         key={"empty"}
@@ -190,46 +213,29 @@ function Notifications() {
                                             )}
                                         />
                                     </motion.div>
-                                )
-                            ) : (
-                                <motion.div
-                                    key={"empty"}
-                                    variants={{
-                                        initial: {x: "384px"},
-                                        animate: {x: 0},
-                                        exit: {x: "384px"},
-                                    }}
-                                    initial="initial"
-                                    animate="animate"
-                                    exit="exit"
-                                >
-                                    <Empty
-                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                        description={tNotifications("empty")}
-                                    />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
-                </div>
-            )}
-        >
-            <Badge
-                count={
-                    isLoading ? (
-                        <FontAwesomeIcon icon={faClock} />
-                    ) : (
-                        data?.length
-                    )
-                }
-                size="small"
+                )}
             >
-                <FontAwesomeIcon
-                    className="text-xl hover:text-primary transition duration-150"
-                    icon={faBell}
-                />
-            </Badge>
-        </Dropdown>
+                <Badge
+                    count={
+                        isLoading ? (
+                            <FontAwesomeIcon icon={faClock} />
+                        ) : (
+                            data?.length
+                        )
+                    }
+                    size="small"
+                >
+                    <FontAwesomeIcon
+                        className="text-xl hover:text-primary transition duration-150"
+                        icon={faBell}
+                    />
+                </Badge>
+            </Dropdown>
+        </>
     );
 }
 

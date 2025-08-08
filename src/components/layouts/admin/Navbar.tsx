@@ -1,4 +1,6 @@
 import Notifications from "@/features/notifications/components/Notifications";
+import CreateNotifications from "@/features/notifications/components/NotificationsCreate";
+import useUserSession from "@/hooks/useUserSession";
 import {RootState} from "@/lib/store";
 import {toggleState} from "@/lib/store/features/layout/Sider.reducer";
 import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +19,7 @@ function DashboardNavbar() {
     const {text: customText, matchWith} = useSelector(
         (state: RootState) => state.navBar
     );
+    const {user, validatePermission} = useUserSession();
     const {open} = useSelector((state: RootState) => state.sideBar);
     const tPath = useTranslations("routes");
     const [title, setTitle] = useState("");
@@ -24,7 +27,7 @@ function DashboardNavbar() {
         return pathName
             .split("/")
             .map((p, i) => {
-                let retText = "";
+                let retText = tPath.has(p) ? tPath(p) : "";
                 const ruta = pathName
                     .split("/")
                     .slice(0, i + 1)
@@ -73,7 +76,12 @@ function DashboardNavbar() {
                     {customText ?? (tPath.has(title) && tPath(title))}
                 </Typography.Title>
             </div>
-            <Notifications />
+            <div className="flex items-center gap-4">
+                <Notifications />
+                {user && validatePermission("@notifications-create") && (
+                    <CreateNotifications />
+                )}
+            </div>
         </nav>
     );
 }

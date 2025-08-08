@@ -132,7 +132,9 @@
         "teams": "Role de equipo",
         "users": "Usuarios",
         "roles": "Roles",
-        "profile": "Perfil"
+        "profile": "Perfil",
+        "socialMedia": "Redes sociales",
+        "youtube": "YouTube"
     },
     "components": {
         "layout": {
@@ -141,6 +143,8 @@
                     "posts": "Publicaciones",
                     "categories": "Categorías",
                     "tags": "Etiquetas",
+                    "socialMedia": "Redes sociales",
+                    "youtube": "YouTube",
                     "settings": "Ajustes",
                     "teams": "Role de equipo",
                     "users": "Usuarios",
@@ -194,6 +198,22 @@
                 "submit": "Generar imagen"
             },
             "save": " Guardar imagen"
+        }
+    },
+    "dashboard": {
+        "hello": "Hola ",
+        "subTitle": "Analíticas del sito, por mes",
+        "goPost": "Ir a publicaciones",
+        "infoSnapshot": {
+            "newUsers": "Nuevos usuarios",
+            "pageViews": "Visitas por página",
+            "totalUsers": "Total de usuarios"
+        },
+        "devices": {
+            "title": "Dispositivos",
+            "desktop": "Escritorio",
+            "mobile": "Móvil",
+            "tablet": "Tablet"
         }
     },
     "categories": {
@@ -285,6 +305,68 @@
             "history": "Historial de revisiones"
         }
     },
+    "youtube": {
+        "search": "Buscar Videos",
+        "add": "Agregar video",
+        "edit": "Editar video",
+        "delete": "Desea eliminar la video?",
+        "card": {
+            "DRAFT": "Borrador",
+            "REVIEW": "Revisión",
+            "PUBLISHED": "Publicado",
+            "ARCHIVED": "Archivado",
+            "REJECT": "Revisión rechazada",
+            "READY": "Listo para publicación",
+            "status": "Estado",
+            "edit": "Editar publicación",
+            "review": "Revisar publicación",
+            "delete": "Eliminar publicación",
+            "author": "Autor"
+        },
+        "form": {
+            "createTitle": "Nuevo video",
+            "title": "Título",
+            "description": "Descripción",
+            "thumbnail": "Miniatura",
+            "publishedAt": "Fecha de publicación",
+            "DRAFT": "Borrador",
+            "REVIEW": "Revisión",
+            "PUBLISHED": "Publico",
+            "ARCHIVED": "Archivado",
+            "status": "Estado",
+            "content": "Contenido",
+            "category": "Categoría",
+            "tags": "Etiquetas",
+            "saveDraft": "Guardar borrador",
+            "cancel": "Regresar",
+            "publish": "Publicar publicación",
+            "review": "Revisar publicación",
+            "reviewPending": "Revisión pendiente",
+            "return": "Regresar",
+            "errors": {
+                "titleRequired": "El título es requerido",
+                "descriptionRequired": "La descripción es requerida",
+                "thumbnailRequired": "La miniatura es requerida",
+                "publishedAtRequired": "La fecha de publicación es requerida",
+                "statusRequired": "El estado es requerido",
+                "contentRequired": "El contenido es requerido",
+                "categoryRequired": "La categoría es requerida",
+                "tagsRequired": "Las etiquetas son requeridas"
+            }
+        },
+        "formReview": {
+            "comment": "Comentario",
+            "reject": "Rechazar",
+            "approve": "Aprobar",
+            "addNote": "Agregar nota",
+            "note": {
+                "title": "Agregar nota en $time",
+                "label": "Nota",
+                "addNote": "Agregar nota",
+                "cancel": "Cancelar nota"
+            }
+        }
+    },
     "teamRoles": {
         "search": "Buscar role de equipo",
         "add": "Agregar role de equipo",
@@ -328,6 +410,7 @@
             "permissions": "Permisos"
         },
         "permissions": {
+            "@notifications-create": "Crear publicaciones",
             "@posts": "Publicaciones",
             "@posts-all": "Ver todas las publicaciones",
             "@post": "Ver publicación",
@@ -351,6 +434,14 @@
             "@team-role-create": "Crear rol de equipo",
             "@team-role-update": "Editar rol de equipo",
             "@team-role-delete": "Eliminar rol de equipo",
+            "@ytVideos": "Ver videos de YouTube",
+            "@ytVideos-all": "Ver todos los videos de YouTube",
+            "@ytVideo": "Ver video de YouTube",
+            "@ytVideo-create": "Crear video de YouTube",
+            "@ytVideo-update": "Editar video de YouTube",
+            "@ytVideo-delete": "Eliminar video de YouTube",
+            "@ytVideo-review": "Revisar video de YouTube",
+            "@ytVideo-publish": "Publicar video de YouTube",
             "@users": "Usuarios",
             "@user": "Usuario",
             "@user-create": "Crear usuario",
@@ -395,6 +486,40 @@
         "markAsRead": "Marcar como leídas",
         "markAsReadAll": "Marcar todas como leídas",
         "delete": "Eliminar notificaciones",
-        "deleteConfirmation": "¿Está seguro de eliminar todas las notificaciones?"
+        "deleteConfirmation": "¿Está seguro de eliminar todas las notificaciones?",
+        "notificationType": {
+            "VIDEO": "Video",
+            "INFO": "Información",
+            "WARNING": "Advertencia",
+            "SUCCESS": "Éxito",
+            "SYSTEM": "Sistema",
+            "POST_REVIEW": "Revisión de publicación",
+            "POST_REVIEW_ACCEPTED": "Revisión aprobada",
+            "POST_REVIEW_CHANGED": "Revisión cambiada",
+            "POST_PUBLISHED": "Publicación publicada",
+            "POST_ARCHIVED": "Publicación archivada"
+        },
+        "notificationMode": {
+            "ALL": "Todos los usuarios",
+            "USERS": "Elegir usuarios"
+        },
+        "form": {
+            "title": "Enviar notificación",
+            "message": "Mensaje",
+            "users": "Elegir usuarios",
+            "type": "Tipo de notificación",
+            "notificationType": {
+                "VIDEO": "Video",
+                "INFO": "Información",
+                "WARNING": "Advertencia",
+                "SUCCESS": "Éxito",
+                "SYSTEM": "Sistema",
+                "POST_REVIEW": "Revisión de publicación",
+                "POST_REVIEW_ACCEPTED": "Revisión aprobada",
+                "POST_REVIEW_CHANGED": "Revisión cambiada",
+                "POST_PUBLISHED": "Publicación publicada",
+                "POST_ARCHIVED": "Publicación archivada"
+            }
+        }
     }
 }

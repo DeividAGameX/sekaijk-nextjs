@@ -1,16 +1,24 @@
 import AxiosBaseQuery from "@/lib/store/AxiosQuery";
 import {createApi} from "@reduxjs/toolkit/query/react";
-import {NotificationUserType} from "../types/notifications";
+import {
+    NotificationUserType,
+    SendNotificationProps,
+} from "../types/notifications";
 
 interface NotificationRead {
     id: string;
     read: boolean;
 }
 
+interface SendToUser {
+    id: number;
+    name: string;
+}
+
 export const notificationsApi = createApi({
     reducerPath: "notifications",
     baseQuery: AxiosBaseQuery,
-    tagTypes: ["notifications"],
+    tagTypes: ["notifications", "userSend"],
     endpoints: (builder) => ({
         getNotifications: builder.query<NotificationUserType[], null>({
             query: () => ({
@@ -18,6 +26,13 @@ export const notificationsApi = createApi({
                 method: "GET",
             }),
             providesTags: ["notifications"],
+        }),
+        getToSendUsers: builder.query<SendToUser[], null>({
+            query: () => ({
+                url: "/profile/notifications/create/toSend",
+                method: "GET",
+            }),
+            providesTags: ["userSend"],
         }),
         markRead: builder.mutation({
             query: (data: NotificationRead) => ({
@@ -34,6 +49,14 @@ export const notificationsApi = createApi({
             }),
             invalidatesTags: ["notifications"],
         }),
+        sendNotifications: builder.mutation({
+            query: (data: SendNotificationProps) => ({
+                url: "/profile/notifications/create",
+                method: "POST",
+                data,
+            }),
+            invalidatesTags: ["notifications"],
+        }),
     }),
 });
 
@@ -41,4 +64,6 @@ export const {
     useGetNotificationsQuery,
     useMarkAllReadMutation,
     useMarkReadMutation,
+    useGetToSendUsersQuery,
+    useSendNotificationsMutation,
 } = notificationsApi;

@@ -2,19 +2,18 @@ import AxiosBaseQuery from "@/lib/store/AxiosQuery";
 import {createApi} from "@reduxjs/toolkit/query/react";
 import {ResourceType} from "../types/userResource";
 
-interface ResourceForm {
-    name: string;
-    url: string;
-    type: ResourceType;
-    resourceId: string;
-    usersFoldersId: string | null;
-    typeForm: "RESOURCE";
-}
+// interface ResourceForm {
+//     name: string;
+//     url: string;
+//     type: ResourceType;
+//     resourceId: string;
+//     usersFoldersId: string | null;
+//     typeForm: "RESOURCE";
+// }
 
 interface FolderProps {
     name: string;
     parentId: string | null;
-    typeForm: "FOLDER";
 }
 
 interface Resource {
@@ -51,8 +50,16 @@ export const resourceApi = createApi({
             providesTags: ["resources"],
         }),
         uploadResource: builder.mutation({
-            query: (data: ResourceForm | FolderProps) => ({
+            query: (body) => ({
                 url: "/profile/resources",
+                method: "POST",
+                data: body,
+            }),
+            invalidatesTags: ["resources"],
+        }),
+        uploadFolder: builder.mutation({
+            query: (data: FolderProps) => ({
+                url: "/profile/resources/folder",
                 method: "POST",
                 data: data,
             }),
@@ -78,6 +85,7 @@ export const resourceApi = createApi({
 export const {
     useGetResourcesQuery,
     useUploadResourceMutation,
+    useUploadFolderMutation,
     useDeleteResourceMutation,
     useDeleteFolderMutation,
 } = resourceApi;

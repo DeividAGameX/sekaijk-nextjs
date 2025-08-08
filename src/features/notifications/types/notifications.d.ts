@@ -27,3 +27,17 @@ export interface NotificationSendType {
     targetUrl?: string;
     recipientIds: number[];
 }
+
+interface NotificationProp {
+    title: string;
+    message: string;
+    type: NotificationEnum;
+    targetUrl?: string;
+}
+
+interface SendNotificationProps extends NotificationProp {
+    permission?: string;
+    id?: number | string;
+    users?: number[];
+    typeToSend: "ALL" | "PERMISSION" | "USERS" | "ROL" | "POST";
+}

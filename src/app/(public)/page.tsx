@@ -192,8 +192,8 @@ export default async function Home() {
                             <Image
                                 src={post.banner ?? ""}
                                 alt={post.title}
-                                width={1920}
-                                height={1080}
+                                width={1200}
+                                height={630}
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute top-0 left-0 bg-neutral-950/40 w-full h-full">

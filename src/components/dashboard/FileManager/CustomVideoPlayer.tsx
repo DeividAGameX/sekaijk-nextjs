@@ -65,14 +65,12 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({
         }
     };
 
-    // const handleFullScreen = () => {
-    //     const video = videoRef.current;
-    //     if (video) {
-    //         if (video.requestFullscreen) video.requestFullscreen();
-    //         else if ((video as any).webkitEnterFullscreen)
-    //             (video as any).webkitEnterFullscreen();
-    //     }
-    // };
+    const handleFullScreen = () => {
+        const video = videoRef.current;
+        if (video) {
+            if (video.requestFullscreen) video.requestFullscreen();
+        }
+    };
 
     return (
         <div
@@ -85,6 +83,8 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({
                 src={src}
                 className="w-full h-full"
                 onTimeUpdate={handleTimeUpdate}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
             />
             <div
                 className={`w-full h-full absolute top-0 left-0 ${
@@ -107,13 +107,20 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({
                             className="w-full"
                             value={progress}
                             min={0}
+                            step={0.1}
                             max={100}
                             onChange={handleProgressChange}
+                            tooltip={{
+                                children: formatTime(
+                                    videoRef.current?.currentTime ?? 0
+                                ),
+                            }}
                         />
                         <p>{formatTime(videoRef.current?.duration ?? 0)}</p>
                         <Button
                             type="text"
                             icon={<FontAwesomeIcon icon={faExpand} />}
+                            onClick={handleFullScreen}
                         />
                     </div>
                     <div className="absolute flex justify-between px-2 py-1 w-full">

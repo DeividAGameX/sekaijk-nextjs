@@ -3,13 +3,19 @@ import {Prisma} from "@prisma/client";
 import ResourceModel from "../../lib/ResourceModel";
 import {RespCommon} from "@/types/Resp";
 import FolderModel from "../../lib/FolderModel";
-import {GetResource} from "../../types/userResource";
+import {GetResource, ResourceType} from "../../types/userResource";
 
 export default async function getResource(
     id: number,
-    folderId?: string
+    folderId?: string,
+    filterProps?: ResourceType[]
 ): Promise<[GetResource | RespCommon, ResponseInit]> {
     try {
+        const where: Prisma.UsersResourcesWhereInput = {
+            type: {
+                in: filterProps || ["IMAGE", "AUDIO", "DOCUMENT", "VIDEO"],
+            },
+        };
         if (folderId) {
             const folder = await FolderModel.findUnique({
                 select: {
@@ -23,6 +29,7 @@ export default async function getResource(
                             type: true,
                             resourceId: true,
                         },
+                        where: where,
                     },
                     children: {
                         select: {
@@ -59,6 +66,7 @@ export default async function getResource(
                     resourceId: true,
                 },
                 where: {
+                    ...where,
                     userId: id,
                     usersFoldersId: null,
                 },

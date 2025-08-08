@@ -66,7 +66,7 @@ function GeneratorImage({
         const dataUri = `data:image/png;base64,${base64Image}`;
         const data = new FormData();
         data.append("file", dataUri);
-        data.append("cloud_name", process.env.NEXT_PUBLIC_CLOUD_NAME ?? "");
+        data.append("cloud_name", process.env.CLOUDINARY_CLOUD_NAME ?? "");
         data.append(
             "upload_preset",
             process.env.NEXT_PUBLIC_UPLOAD_PRESET ?? ""

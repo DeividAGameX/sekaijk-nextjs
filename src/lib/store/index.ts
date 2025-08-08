@@ -8,6 +8,7 @@ import postReducer from "@/features/posts/lib/PostsStore.reducer";
 import TeamRoleModal from "@/features/teamRole/lib/TeamRoleModal.reducer";
 import UserModal from "@/features/users/lib/userModal.reducer";
 import RolModal from "@/features/roles/lib/RolModal.reducer";
+import YoutubeModal from "@/features/socialMedia/youtube/lib/VideoModal.reducer";
 import {categoriesApi} from "@/features/categories/lib/Categories.reducer";
 import {tagsApi} from "@/features/tags/lib/Tags.reducer";
 import {postsApi} from "@/features/posts/lib/Posts.reducer";
@@ -17,6 +18,8 @@ import {usersApi} from "@/features/users/lib/user.reducer";
 import {rolesApi} from "@/features/roles/lib/Roles.reducer";
 import {profileApi} from "@/features/profile/lib/Profile.reducer";
 import {notificationsApi} from "@/features/notifications/lib/Notifications.reducer";
+import {analyticsApi} from "@/features/analytics/lib/Analytics.reducer";
+import {youtubeApi} from "@/features/socialMedia/youtube/lib/Video.reducer";
 
 export const store = configureStore({
     reducer: {
@@ -30,6 +33,7 @@ export const store = configureStore({
         teamRoleModal: TeamRoleModal,
         userModal: UserModal,
         roleModal: RolModal,
+        youtubeModal: YoutubeModal,
         // API
         [categoriesApi.reducerPath]: categoriesApi.reducer,
         [tagsApi.reducerPath]: tagsApi.reducer,
@@ -40,6 +44,8 @@ export const store = configureStore({
         [rolesApi.reducerPath]: rolesApi.reducer,
         [profileApi.reducerPath]: profileApi.reducer,
         [notificationsApi.reducerPath]: notificationsApi.reducer,
+        [analyticsApi.reducerPath]: analyticsApi.reducer,
+        [youtubeApi.reducerPath]: youtubeApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -51,7 +57,9 @@ export const store = configureStore({
             usersApi.middleware,
             rolesApi.middleware,
             profileApi.middleware,
-            notificationsApi.middleware
+            notificationsApi.middleware,
+            analyticsApi.middleware,
+            youtubeApi.middleware
         ),
 });
 

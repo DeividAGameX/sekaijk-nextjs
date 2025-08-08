@@ -47,42 +47,48 @@ function DashboardLayout({
                 return response;
             },
             function (error) {
-                const {data} = error.response;
-                if (data.message === "formInvalid")
-                    api.error({
-                        message: tResponseError(`${data.message}.title`),
-                        description: (
-                            <>
-                                <p>
-                                    {tResponseError(`${data.message}.message`)}
-                                </p>
-                                <ul>
-                                    {Object.entries(data.field).map(
-                                        ([key, value]) => (
-                                            <li key={key}>
-                                                {tResponseError(
-                                                    `${data.message}.field.${key}`
-                                                )}
-                                                :{" "}
-                                                {tResponseError(
-                                                    `${data.message}.code.${value}`
-                                                )}
-                                            </li>
-                                        )
-                                    )}
-                                </ul>
-                            </>
-                        ),
-                        duration: 5,
-                        placement: "topRight",
-                    });
-                else
-                    api.error({
-                        message: tResponseError(`${data.message}.title`),
-                        description: tResponseError(`${data.message}.message`),
-                        duration: 5,
-                        placement: "topRight",
-                    });
+                if (error.response) {
+                    const {data} = error.response;
+                    if (data.message === "formInvalid")
+                        api.error({
+                            message: tResponseError(`${data.message}.title`),
+                            description: (
+                                <>
+                                    <p>
+                                        {tResponseError(
+                                            `${data.message}.message`
+                                        )}
+                                    </p>
+                                    <ul>
+                                        {Object.entries(data.field).map(
+                                            ([key, value]) => (
+                                                <li key={key}>
+                                                    {tResponseError(
+                                                        `${data.message}.field.${key}`
+                                                    )}
+                                                    :{" "}
+                                                    {tResponseError(
+                                                        `${data.message}.code.${value}`
+                                                    )}
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+                                </>
+                            ),
+                            duration: 5,
+                            placement: "topRight",
+                        });
+                    else
+                        api.error({
+                            message: tResponseError(`${data.message}.title`),
+                            description: tResponseError(
+                                `${data.message}.message`
+                            ),
+                            duration: 5,
+                            placement: "topRight",
+                        });
+                }
                 return Promise.reject(error);
             }
         );

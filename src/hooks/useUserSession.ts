@@ -17,10 +17,12 @@ interface UserProvider {
         description: string;
         Permissions: {permission: string}[];
     };
+    token?: string;
 }
 
 function useUserSession() {
     const [user, setUser] = useState<UserProvider | null>();
+    const [token, setToken] = useState("");
     const [loading, setLoading] = useState(true);
     const {data, status} = useSession();
 
@@ -40,6 +42,11 @@ function useUserSession() {
             if (status === "authenticated") {
                 setLoading(false);
                 setUser(data.user as UserProvider);
+                setToken(
+                    `${(data.user as UserProvider).name}:${
+                        (data.user as UserProvider).token
+                    }`
+                );
             } else {
                 setLoading(true);
                 setUser(null);
@@ -51,6 +58,7 @@ function useUserSession() {
         user,
         loading,
         validatePermission,
+        token,
     };
 }
 

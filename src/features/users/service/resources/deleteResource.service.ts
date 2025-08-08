@@ -3,16 +3,12 @@ import ResourceModel from "../../lib/ResourceModel";
 import {UserResource} from "../../types/userResource";
 import {validateErrorPrisma} from "@/utils/validateError";
 import {Prisma} from "@prisma/client";
-import cloudinary from "cloudinary";
-
-cloudinary.v2.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_APIKEY,
-    api_secret: process.env.CLOUDINARY_APISECRET,
-});
+import {cloudinary} from "@/lib/CloudinaryConfig";
+import axios from "axios";
 
 export default async function deleteResource(
-    id: number
+    id: number,
+    token?: string
 ): Promise<[UserResource | RespCommon, ResponseInit]> {
     try {
         const userResource = await ResourceModel.delete({
@@ -21,7 +17,17 @@ export default async function deleteResource(
             },
         });
         console.log(userResource);
-        await cloudinary.v2.uploader.destroy(
+        if (userResource.type === "VIDEO") {
+            axios.delete(
+                `${process.env.CDN}/delete/${userResource.resourceId}`,
+                {
+                    headers: {
+                        Authorization: `Key ${token}`,
+                    },
+                }
+            );
+        }
+        await cloudinary.uploader.destroy(
             userResource.resourceId,
             {
                 resource_type: userResource.type.toLocaleLowerCase(),

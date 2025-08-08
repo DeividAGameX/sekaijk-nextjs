@@ -13,29 +13,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Define model user
+
 model Users {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique
-  email            String             @unique
-  password         String
-  avatar           String
-  banner           String?
-  description      String?
-  slug             String?            @unique
-  rolesId          Int
-  publicOrder      Int?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now()) @updatedAt
-  Posts            Posts[]
-  Roles            Roles              @relation(fields: [rolesId], references: [id])
-  social           Social[]
-  FoldersResources UsersFolders[]
-  UsersResources   UsersResources[]
-  CapReview        CapReview[]
-  TeamRoles        TeamRole[]
-  PostReviewAuthor PostsReview[]      @relation("PostReviewAuthor")
-  PostReviewEditor PostsReview[]      @relation("PostReviewEditor")
-  NotificationUser NotificationUser[]
+  id                  Int                @id @default(autoincrement())
+  name                String             @unique
+  email               String             @unique
+  password            String
+  avatar              String
+  banner              String?
+  description         String?
+  slug                String?            @unique
+  rolesId             Int
+  publicOrder         Int?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @default(now()) @updatedAt
+  Posts               Posts[]
+  Roles               Roles              @relation(fields: [rolesId], references: [id])
+  social              Social[]
+  FoldersResources    UsersFolders[]
+  UsersResources      UsersResources[]
+  CapReview           CapReview[]
+  TeamRoles           TeamRole[]
+  PostReviewAuthor    PostsReview[]      @relation("PostReviewAuthor")
+  PostReviewEditor    PostsReview[]      @relation("PostReviewEditor")
+  NotificationUser    NotificationUser[]
+  YTVideoReviewAuthor YtVideosReview[]   @relation("YTVideoReviewAuthor")
+  YTVideoReviewEditor YtVideosReview[]   @relation("YTVideoReviewEditor")
+  VideoMake           YtVideos[]         @relation("VideoMake")
+  MyVideos            YtVideos[]
 }
 
 model Social {
@@ -126,6 +132,9 @@ model Permissions {
   role       Roles    @relation(fields: [roleId], references: [id])
 }
 
+// ----
+// Models for posts
+
 model Posts {
   id          Int           @id @default(autoincrement())
   title       String
@@ -173,15 +182,82 @@ model Categories {
 }
 
 model Tags {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
   color       String
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
   posts       Posts[]
   Animes      Animes[]
+  YtVideos    YtVideos[]
 }
+
+// ----
+// Dashboard
+model AnalyticsSnapshot {
+  id                     String                   @id @default(cuid())
+  date                   DateTime
+  pageViews              Int
+  totalUsers             Int
+  newUsers               Int
+  bounceRate             Float // Porcentaje: 0.0 a 100.0
+  avgSessionDuration     Float // En segundos
+  createdAt              DateTime                 @default(now())
+  AnalyticsTopPage       AnalyticsTopPage[]
+  AnalyticsTrafficSource AnalyticsTrafficSource[]
+  AnalyticsCountry       AnalyticsCountry[]
+  AnalyticsDevice        AnalyticsDevice[]
+  AnalyticsTopTitle      AnalyticsTopTitle[]
+}
+
+model AnalyticsTopPage {
+  id         String @id @default(cuid())
+  snapshotId String
+  path       String
+  pageViews  Int
+
+  snapshot AnalyticsSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsTopTitle {
+  id         String @id @default(cuid())
+  snapshotId String
+  title      String
+  pageViews  Int
+
+  snapshot AnalyticsSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsTrafficSource {
+  id         String @id @default(cuid())
+  snapshotId String
+  channel    String // ej. "Organic Search", "Direct", "Referral"
+  sessions   Int
+
+  snapshot AnalyticsSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsCountry {
+  id         String @id @default(cuid())
+  snapshotId String
+  country    String
+  totalUsers Int
+
+  snapshot AnalyticsSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsDevice {
+  id         String @id @default(cuid())
+  snapshotId String
+  device     String // "desktop", "mobile", "tablet"
+  totalUsers Int
+
+  snapshot AnalyticsSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+}
+
+// ----
+// Models for anime (Pending)
 
 model Animes {
   id          Int         @id @default(autoincrement())
@@ -217,22 +293,48 @@ model CapReview {
   Author      Users       @relation(fields: [author], references: [id])
 }
 
+// ----
+// Models for Social media
+
 model YtVideos {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  thumbnail   String
-  publishedAt DateTime
-  videoId     String
-  type_video  Int
+  id            String           @id @default(uuid())
+  title         String
+  description   String?
+  thumbnail     String?
+  videoId       String?
+  cloudinaryId  String?
+  cloudinaryUrl String?
+  ytUrl         String?
+  type_video    YoutubeType      @default(VIDEO)
+  VideoStatus   PostsStatus      @default(DRAFT)
+  usersId       Int
+  publishedAt   DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now()) @updatedAt
+  Author        Users            @relation("VideoMake", fields: [usersId], references: [id])
+  Members       Users[]
+  Tags          Tags[]
+  VideoReviews  YtVideosReview[]
 }
 
-enum AnimeStatus {
-  ONGOING
-  COMPLETED
-  CANCELLED
+model YtVideosReview {
+  id         String        @id @default(uuid())
+  ytVideosId String?
+  comment    String?
+  notes      Json?
+  status     REVIEW_STATUS @default(PENDING)
+  active     Boolean       @default(true)
+  authorId   Int
+  editorId   Int?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now()) @updatedAt
+  author     Users         @relation("YTVideoReviewAuthor", fields: [authorId], references: [id])
+  editor     Users?        @relation("YTVideoReviewEditor", fields: [editorId], references: [id])
+  YtVideos   YtVideos?     @relation(fields: [ytVideosId], references: [id])
 }
 
+// Enums for your models
+// Enums for Post
 enum PostsStatus {
   DRAFT
   REVIEW
@@ -240,6 +342,14 @@ enum PostsStatus {
   ARCHIVED
 }
 
+enum ResourceType {
+  VIDEO
+  AUDIO
+  DOCUMENT
+  IMAGE
+}
+
+// Enums for Users
 enum NotificationType {
   INFO
   WARNING
@@ -250,7 +360,19 @@ enum NotificationType {
   POST_REVIEW_CHANGED
   POST_PUBLISHED
   POST_ARCHIVED
+  VIDEO_REVIEW
+  VIDEO_REVIEW_ACCEPTED
+  VIDEO_REVIEW_CHANGED
+  VIDEO_PUBLISHED
+  VIDEO_ARCHIVED
   VIDEO
+}
+
+// Enums for Anime
+enum AnimeStatus {
+  ONGOING
+  COMPLETED
+  CANCELLED
 }
 
 enum REVIEW_STATUS {
@@ -259,9 +381,9 @@ enum REVIEW_STATUS {
   REJECTED
 }
 
-enum ResourceType {
+// Enums for Social Media
+
+enum YoutubeType {
   VIDEO
-  AUDIO
-  DOCUMENT
-  IMAGE
+  SHORTS
 }

@@ -19,6 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
         where: {
             isSection: true,
         },
+        orderBy: {
+            id: "desc",
+        },
     });
     const members = [];
     for (const team of teams) {

@@ -15,6 +15,7 @@ import {useMemo} from "react";
 import {useDispatch} from "react-redux";
 import Link from "./Link";
 import useUserSession from "@/hooks/useUserSession";
+import {faYoutube} from "@fortawesome/free-brands-svg-icons";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -28,7 +29,9 @@ function MenuItems({isDrawer}: {isDrawer?: boolean}) {
         if (!user) return ite;
         if (!validatePermission) return ite;
         const postItems: MenuItem[] = [];
+        const socialMedia: MenuItem[] = [];
         const adminItems: MenuItem[] = [];
+        // SekAiJK WebSite
         if (validatePermission("@post"))
             postItems.push({
                 key: "posts",
@@ -60,6 +63,26 @@ function MenuItems({isDrawer}: {isDrawer?: boolean}) {
             type: "group",
             children: postItems,
         });
+        // ---
+        if (validatePermission("@ytVideos"))
+            socialMedia.push({
+                key: "youtube",
+                label: (
+                    <Link href={"/dashboard/socialMedia/youtube"}>
+                        {tMenu("youtube")}
+                    </Link>
+                ),
+                icon: <FontAwesomeIcon icon={faYoutube} />,
+                onClick: isDrawer ? () => dispatch(toggleState()) : undefined,
+            });
+        if (socialMedia.length > 0)
+            ite.push({
+                key: "labelSocialMedia",
+                label: tMenu("socialMedia"),
+                type: "group",
+                children: socialMedia,
+            });
+        // Admin SekAiJK WebSite
         if (validatePermission("@team-roles"))
             adminItems.push({
                 key: "teams",
@@ -100,6 +123,7 @@ function MenuItems({isDrawer}: {isDrawer?: boolean}) {
                 type: "group",
                 children: adminItems,
             });
+        // ---
         return ite;
     }, [user, validatePermission, loading, dispatch, tMenu, isDrawer]);
 
